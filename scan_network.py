@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-""" script for quick scanning of an IP range """
+""" script for quick scanning of an IP range 
+compare with: time nmap -sn -T5 --min-parallelism 100 -oG - 
+"""
 
 import ipaddress
 import time
