@@ -1,6 +1,10 @@
 # systools
 Various Linux System Tools
 
+- [scan_network.py](scan_network.py): fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
+- [connection_stats.py](connection_stats.py): quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
+
+# Example usage
 - **scan_network.py** - fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
 ```
 usage: scan_network.py CIDR (e.g. abc.def.gh.yz/nn)
@@ -27,7 +31,7 @@ Total down: 144
 Total unknown: 0
 ```
 
-- **connection_stats.py** - quick report on connections (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
+- **connection_stats.py** - quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
 ```
 usage: connection_stats.py [--ver=tcp|tcp4|tcp6|udp|udp4|udp6|all] (default is tcp which is tcp4 connections)
 
