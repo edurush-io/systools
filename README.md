@@ -93,7 +93,8 @@ Sample output:
 ```
 
 ### lsod.py - list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread 
-```usage: lsod.py
+```
+usage: lsod.py
 
 Very fast file descriptor usage report
 
@@ -104,6 +105,7 @@ optional arguments:
   --max_threads MAX_THREADS
                         Max num of threads per pid to show (requires
                         --threads)
+
 ```
 lsod sample output 1:
 ```
