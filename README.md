@@ -6,7 +6,7 @@ Various Linux System Tools
 - [lsod.py](lsod.py): list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread (_Python 3_)
 
 # Example usage
-- **scan_network.py** - fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
+### scan_network.py - fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
 ```
 usage: scan_network.py CIDR (e.g. abc.def.gh.yz/nn)
 
@@ -32,7 +32,7 @@ Total down: 144
 Total unknown: 0
 ```
 
-- **connection_stats.py** - quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
+### connection_stats.py - quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
 ```
 usage: connection_stats.py [--ver=tcp|tcp4|tcp6|udp|udp4|udp6|all] (default is tcp which is tcp4 connections)
 
@@ -92,7 +92,7 @@ Sample output:
  54882 : 3
 ```
 
-**lsod.py** - list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread 
+### lsod.py - list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread 
 ```usage: lsod.py
 
 Very fast file descriptor usage report
