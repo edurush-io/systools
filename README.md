@@ -3,6 +3,7 @@ Various Linux System Tools
 
 - [scan_network.py](scan_network.py): fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
 - [connection_stats.py](connection_stats.py): quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (requires Python 3)
+- [lsod.py](lsod.py): list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread
 
 # Example usage
 - **scan_network.py** - fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
@@ -89,4 +90,87 @@ Sample output:
  54464 : 3
  40672 : 3
  54882 : 3
+```
+
+**lsod.py** - list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread 
+```usage: lsod.py
+
+Very fast file descriptor usage report
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --max_pids MAX_PIDS   Max num of pids to show
+  --threads             Include also threads in the output
+  --max_threads MAX_THREADS
+                        Max num of threads per pid to show (requires
+                        --threads)
+```
+lsod sample output 1:
+```
+Total number of open fds: 3114035
+        Total anon_inode 551623
+        Total dev 5755
+        Total file 415373
+        Total pipe 614524
+        Total proc 305
+        Total run 54
+        Total socket 1526388
+        Total sys 4
+        Total unknown 9
+Command           PID       PPID      FD count  FD types
+java              870       1         3094938   anon_inode(549601) dev(5013) file(411312) pipe(613568) socket(1515444)
+java              1171      1         13770     anon_inode(340) dev(255) file(3060) pipe(510) socket(9605)
+mongod            2252      1         2808      anon_inode(1287) dev(195) file(819) socket(507)
+icinga2           18024     1         1344      anon_inode(256) dev(64) file(96) pipe(256) run(32) socket(640)
+python3           15485     14584     408       dev(111) proc(297)
+nxlog             30613     1         348       anon_inode(72) dev(36) file(72) pipe(144) run(12) socket(12)
+salt-minion       24344     24335     100       anon_inode(32) dev(12) pipe(24) socket(28) unknown(4)
+systemd           1         0         55        anon_inode(10) dev(6) pipe(1) proc(2) run(3) socket(32) sys(1)
+rsyslogd          1269      1         36        dev(12) file(12) proc(4) socket(8)
+systemd-journal   909       1         28        anon_inode(5) dev(5) run(2) socket(15) sys(1)
+```
+lsod.py sample output 2 (with threads):
+```
+Total number of open fds: 430472
+        Total anon_inode 2972
+        Total dev 1378
+        Total file 53541
+        Total pipe 5995
+        Total proc 179
+        Total run 53
+        Total socket 366346
+        Total sys 4
+        Total unknown 4
+Command           PID       PPID      FD count  FD types
+java              8673      1         428090    anon_inode(2576) dev(1104) file(53360) pipe(5536) socket(365514)
+                                                |- ExecutorService(163564)
+                                                |- qtp1055096410-7(112490)
+                                                |- cluster-Cluster(17452)
+                                                |- C3P0PooledConne(16200)
+                                                |- ContextualDataL(5779)
+                                                |- ForkJoinPool.co(3493)
+                                                |- RMI TCP Accept-(3475)
+                                                |- TargetedContext(2321)
+                                                |- qtp1055096410-4(2315)
+                                                |- OperatingSystem(2310)
+icinga2           15200     1         1344      anon_inode(256) dev(64) file(96) pipe(256) run(32) socket(640)
+                                                |- icinga2(1302)
+nxlog             4524      1         348       anon_inode(72) dev(36) file(72) pipe(144) run(12) socket(12)
+                                                |- nxlog(319)
+python3           24116     12771     261       dev(90) proc(171)
+                                                |- python3(240)
+salt-minion       1531      1523      124       anon_inode(32) dev(12) pipe(48) socket(28) unknown(4)
+                                                |- salt-minion(93)
+systemd           1         0         56        anon_inode(10) dev(6) pipe(1) proc(2) run(3) socket(33) sys(1)
+                                                (no_task)
+rsyslogd          8571      1         36        dev(12) file(12) proc(4) socket(8)
+                                                |- in:imuxsock(9)
+                                                |- in:imklog(9)
+                                                |- rs:main Q:Reg(9)
+systemd-journal   950       1         28        anon_inode(5) dev(5) run(1) socket(16) sys(1)
+                                                (no_task)
+ntpd              1959      1         24        dev(6) socket(18)
+                                                |- ntpd(12)
+systemd           27607     1         22        anon_inode(5) dev(1) proc(2) socket(13) sys(1)
+                                                (no_task)
 ```
