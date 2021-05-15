@@ -11,8 +11,8 @@ lsof -n | awk '{ print $2 " " $1; }' | sort -rn | uniq -c | sort -rn | head -20
 
 # variables
 pid_list = [] # list only, to be used in concurrent execution
-pid_score = {} # pid -> count of all handles, to be used for sorting top fd consumers
-pid_stats = {} # to keep all the counters for each fd type
+pid_score = {} # pid -> count of all FDs, to be used for sorting top FD consumers
+pid_stats = {} # to keep all the counters for each FD type
 pid_extra = {} # to keep extra info, like command (comm), parent pid (ppid), etc
 pid_threads = {} # to keep thread specific stats if requested
 
@@ -32,6 +32,7 @@ cfg['max_workers'] = 300 # how many threads to use concurrently
 cfg['max_pids'] = 10 # how many pids to show
 cfg['show_threads'] = False
 cfg['max_threads'] = 5
+cfg['include_self'] = False
 # end variables
 
 ### functions
@@ -43,6 +44,7 @@ def parse_args ():
     )
     parser.add_argument ("--max_pids", type=int, help="Max num of pids to show", default=cfg['max_pids'])
     parser.add_argument ("--threads", help="Include also threads in the output", action="store_true", default=False)
+    parser.add_argument ("--include_self", help="Include also stats from this script", action="store_true", default=False)
     parser.add_argument ("--max_threads", type=int, help="Max num of threads per pid to show (requires --threads)", default=cfg['max_threads'])
     args = parser.parse_args()
     if args.max_pids is not None:
@@ -51,6 +53,8 @@ def parse_args ():
         cfg['max_threads'] = args.max_threads
     if args.threads:
         cfg['show_threads'] = True
+    if args.include_self:
+        cfg['include_self'] = True
 
 def print_row(arr):
     for i in range(len(arr)):
@@ -73,6 +77,7 @@ def sort_nested_dic(d, col='score', rev=True):
 
 def get_pids(path = "/proc"):
     tmp_pid_list = []
+    self_pid = str(os.getpid())
 
     # we'd like to determine if we are processing processes or tasks;
     # if this is a process, it will call itself recursively to process also tasks
@@ -88,6 +93,10 @@ def get_pids(path = "/proc"):
         # pid or task is gone at this point
         return
     for item in fobj:
+        
+        if not cfg['include_self'] and item.name == self_pid:
+            continue
+            
         if item.is_dir() and item.name.isdigit():
             try:
                 # verify if any file descriptors exist in the directory
@@ -150,7 +159,7 @@ def get_taskid(s):
     return s[start:s.find('/fd/', start)]
 
 def get_stats (pid, path = ""):
-    # the main function to collect fd stats
+    # the main function to collect FD stats
     if len(path) > 0:
         path = path + "/fd/"
         isProcess = False # means this is a task/thread associated with pid, e.g /proc/pid/task/*
@@ -171,7 +180,7 @@ def get_stats (pid, path = ""):
             try:
                 ll = os.readlink(item.path)
             except:
-                # the fd has been closed by the time we got here
+                # the FD has been closed by the time we got here
                 continue
 
             # store the stats into relevant dictionaries
@@ -192,8 +201,7 @@ def get_stats (pid, path = ""):
                 if pid_threads.get(pid) is None:
                     pid_threads[pid] = {}
                 comm = get_comm(pid, "/proc/"+pid+"/task/"+t_id)
-                if pid_threads[pid].get(comm) is None:
-                    pid_threads[pid][comm] = 0
+                pid_threads[pid][comm] = pid_threads[pid].get(comm, 0)
                 pid_threads[pid][comm] += 1
 
             fd_type = get_fd_type(ll)
@@ -207,18 +215,18 @@ def get_stats (pid, path = ""):
         # now prepare to call itself for the tasks (if any)
         tmp_pids = get_pids("/proc/" + pid + "/task")
 
-        # single threaded process would create /proc/pid/task/fd/ with the same pid as the process and have exact same fds
+        # single threaded process would create /proc/pid/task/fd/ with the same pid as the process and have exact same FDs
         # aka /prod/pid/task/pid ; this should be ignored
         try:
             tmp_pids.remove(pid)
         except:
             return
-
+        
         for i in tmp_pids:
             get_stats (pid, "/proc/" + pid + "/task/" + i)
 
 def print_totals():
-    print ("Total number of open fds: {}".format(sum(totals.values())))
+    print ("Total number of open FDs: {}".format(sum(totals.values())))
     for k in sorted(totals):
         print ("\tTotal {} {}".format(k,totals[k]))
 
