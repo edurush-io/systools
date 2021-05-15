@@ -102,9 +102,9 @@ optional arguments:
   -h, --help            show this help message and exit
   --max_pids MAX_PIDS   Max num of pids to show
   --threads             Include also threads in the output
+  --include_self        Include also stats from this script
   --max_threads MAX_THREADS
-                        Max num of threads per pid to show (requires
-                        --threads)
+                        Max num of threads per pid to show (requires --threads)
 
 ```
 lsod sample output 1:
