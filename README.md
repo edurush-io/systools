@@ -4,6 +4,7 @@ Various Linux System Tools
 - [scan_network.py](scan_network.py): fast CIDR scanner reporting Up/Down for each IP in the subnet (_Python 3_)
 - [connection_stats.py](connection_stats.py): quick report on protocols (tcp (4/6) and udp(4/6)) and port utilization within a system (_Python 3_)
 - [lsod.py](lsod.py): list of file descriptors (alternate lsof) - very fast statistics on file descriptors per process/thread (_Python 3_)
+- [python_multicast.py](python_multicast.py): Send/receive UDP multicast packets (_Python 3_)
 
 # Example usage
 ### scan_network.py - fast CIDR scanner reporting Up/Down for each IP in the subnet (_requires Python 3_)
@@ -175,4 +176,19 @@ ntpd              1959      1         24        dev(6) socket(18)
                                                 |- ntpd(12)
 systemd           27607     1         22        anon_inode(5) dev(1) proc(2) socket(13) sys(1)
                                                 (no_task)
+```
+
+### python_multicast.py - Send/receive UDP multicast packets (_requires Python 3_)
+```
+usage: python_multicast.py --send|--receive --ip=MCAST_IP --port=MCAST_PORT
+
+Python multicast send/receive
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --ip IP            IP for Multicast Group
+  --port PORT        Port for Multicast Group
+  --send             Send multicast
+  --receive          Receive multicast
+  --message MESSAGE  Message for Multicast Group (optional)
 ```
