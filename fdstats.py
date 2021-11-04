@@ -5,6 +5,7 @@ import argparse
 import concurrent.futures
 
 """
+File Descriptor stats
 compare speed to
 lsof -n | awk '{ print $2 " " $1; }' | sort -rn | uniq -c | sort -rn | head -20
 """
